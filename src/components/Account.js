@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import './css/Account.css';
 
 const MemberManagement = () => {
   const [members, setMembers] = useState([]);
@@ -30,12 +31,12 @@ const MemberManagement = () => {
     }
   }, [members]);
 
-  const handleChange = (e) => {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     setErrorPhone('');
     setErrorEmail('');
@@ -90,22 +91,40 @@ const MemberManagement = () => {
       username: '',
       password: '',
     });
-  };
+  }, [members, formData, editIndex]);
 
-  const handleEdit = (id) => {
+  const handleEdit = useCallback((id) => {
     const memberToEdit = members.find((member) => member.id === id);
     setFormData(memberToEdit);
     setEditIndex(id);
-  };
+  }, [members]);
 
-  const handleDelete = (id) => {
+  const handleDelete = useCallback((id) => {
     const updatedMembers = members.filter((member) => member.id !== id);
     setMembers(updatedMembers);
-  };
+  }, [members]);
+
+  const renderedMembers = useMemo(() => (
+    members.map((member) => (
+      <tr key={member.id}>
+        <td>{member.name}</td>
+        <td>{member.phone}</td>
+        <td>{member.email}</td>
+        <td>{member.address}</td>
+        <td>{member.username}</td>
+        <td>
+          <div className="actions">
+            <button className="edit-btn" onClick={() => handleEdit(member.id)}>Edit</button>
+            <button className="delete-btn"  onClick={() => handleDelete(member.id)}>Delete</button>
+          </div>
+        </td>
+      </tr>
+    ))
+  ), [members, handleEdit, handleDelete]);
 
   return (
     <div>
-      <h1>Member Account Management</h1>
+      <h1>Accounts</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <input
@@ -125,7 +144,8 @@ const MemberManagement = () => {
             value={formData.phone}
             onChange={handleChange}
             required
-          />        </div>
+          />
+        </div>
         <div>
           <input
             type="email"
@@ -167,40 +187,28 @@ const MemberManagement = () => {
           />
         </div>
         <button type="submit">{editIndex !== null ? 'Update' : 'Save'}</button>
-      {errorPhone && <p style={{ color: 'red' }}>{errorPhone}</p>}
-      {errorEmail && <p style={{ color: 'red' }}>{errorEmail}</p>}
-      {errorUsername && <p style={{ color: 'red' }}>{errorUsername}</p>}
+        {errorPhone && <p style={{ color: 'red' }}>{errorPhone}</p>}
+        {errorEmail && <p style={{ color: 'red' }}>{errorEmail}</p>}
+        {errorUsername && <p style={{ color: 'red' }}>{errorUsername}</p>}
       </form>
+      <div className="table-container">
 
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Address</th>
-            <th>Username</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {members.map((member) => (
-            <tr key={member.id}>
-              <td>{member.name}</td>
-              <td>{member.phone}</td>
-              <td>{member.email}</td>
-              <td>{member.address}</td>
-              <td>{member.username}</td>
-              <td>
-                <div className="actions">
-                  <button onClick={() => handleEdit(member.id)}>Update</button>
-                  <button onClick={() => handleDelete(member.id)}>Delete</button>
-                </div>
-              </td>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Address</th>
+              <th>Username</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {renderedMembers}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

@@ -1,0 +1,57 @@
+.table-container {
+    max-height: 1000px;
+    overflow-y: auto;
+    position: relative;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+thead th {
+    position: sticky;
+    top: 0;
+    background-color: blue;
+    z-index: 1;
+    width: 150px;
+    height: 30px;
+}
+
+th,
+td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    width: 150px;
+    height: 3%;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.edit-btn {
+    background-color: blue;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.edit-btn:hover {
+    background-color: darkblue;
+}
+
+.delete-btn:hover {
+    background-color: darkred;
+}
